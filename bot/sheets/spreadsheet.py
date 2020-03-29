@@ -2,6 +2,7 @@ import pickle
 import string
 from typing import List
 
+from django.utils import timezone
 from googleapiclient.discovery import build
 
 from bot import secrets
@@ -22,9 +23,9 @@ class Spreadsheet:
         self.spreadsheet_id = spreadsheet_id
 
     def _daily_checkin_line(self, dc: DailyCheckin):
-        return [dc.created.strftime('%d.%m.%Y'),
+        return [timezone.localtime(dc.created).strftime('%d.%m.%Y %H:%M'),
                 # работник
-                dc.worker.full_name, dc.worker.company, dc.worker.mentor,
+                dc.worker.full_name, dc.worker.position, dc.worker.boss,
                 # дейлик
                 bool_to_yes_no[dc.worked_today], dc.reason_not_worked, dc.tasks_done_today, dc.problems_today,
                 bool_to_yes_no[dc.will_work_tomorrow], dc.tomorrow_tasks, dc.days_till_start_work]

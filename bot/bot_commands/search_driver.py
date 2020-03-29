@@ -17,16 +17,16 @@ class SearchWorker(BaseConversation):
     command = "search_worker"
     search_params: dict = {
         "full_name__icontains": "",
-        "company__icontains": "",
+        "position__icontains": "",
     }
 
     full_search_params_keyboard = [
-        [InlineKeyboardButton("Название компании содержит", callback_data="company__icontains")],
+        [InlineKeyboardButton("Название должности содержит", callback_data="position__icontains")],
         [InlineKeyboardButton("Имя работника содержит", callback_data="full_name__icontains")],
     ]
 
     callback_to_text = {
-        "company__icontains": "Название компании содержит",
+        "position__icontains": "Название должности содержит",
         "full_name__icontains": "Имя работника содержит",
     }
 
@@ -53,9 +53,9 @@ class SearchWorker(BaseConversation):
 
     def select_filter(self, update: Update, context: CallbackContext):
         query: CallbackQuery = update.callback_query
+        query.edit_message_reply_markup(InlineKeyboardMarkup([[]]))
         if query.data == "Искать":
             return self.do_search(update, context)
-        query.edit_message_reply_markup(InlineKeyboardMarkup([[]]))
         query.edit_message_text(f"**{self.callback_to_text[query.data]}**", parse_mode=ParseMode.MARKDOWN)
         context.user_data["filter"] = query.data
         return self.GET_SEARCH_STRING
@@ -69,16 +69,18 @@ class SearchWorker(BaseConversation):
         return self.SELECT_FILTER
 
     def do_search(self, update: Update, context: CallbackContext):
+        query: CallbackQuery = update.callback_query
         workers = Worker.objects.filter(**self.tmp_storage[update.effective_user.id])
         del self.tmp_storage[update.effective_user.id]
-        context.bot.send_message(update.effective_chat.id, f"Найдено работников: {workers.count()}")
-        context.bot.send_message(update.effective_chat.id, '\n'.join(map(str, workers)))
+        query.edit_message_text(f"Найдено работников: {workers.count()}")
+        if workers.exists():
+            context.bot.send_message(update.effective_chat.id, '\n'.join(map(str, workers)))
         return ConversationHandler.END
 
     def cancel(self, update: Update, context: CallbackContext):
         logger.info(f"User {update.effective_user.id} has cancelled worker search")
         del self.tmp_storage[update.effective_user.id]
-        update.message.reply_text("Поиск водителя отменен")
+        update.message.reply_text("Поиск работника отменен")
         return ConversationHandler.END
 
     def get_handler(self) -> Handler:

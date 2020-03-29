@@ -41,8 +41,8 @@ class Checkin(BaseConversation):
             update.message.reply_text("Не найдено работника, привязанного к данному телеграмму")
             return ConversationHandler.END
         if not settings.CHECKIN_SINCE < worker.get_worker_time().time() < settings.CHECKIN_TILL:
-            update.message.reply_html(f"В текущий момент невозможно сделать checkin\n"
-                                      f"Checkin доступен с <b>{settings.CHECKIN_SINCE.strftime('%H:%M')}</b> до "
+            update.message.reply_html(f"В текущий момент невозможно записать отчет\n"
+                                      f"Запись отчета доступна с <b>{settings.CHECKIN_SINCE.strftime('%H:%M')}</b> до "
                                       f"<b>{settings.CHECKIN_TILL.strftime('%H:%M')}</b> "
                                       f"(у вас определено {worker.get_worker_time().time().strftime('%H:%M')})")
             return ConversationHandler.END
@@ -51,7 +51,7 @@ class Checkin(BaseConversation):
             logger.info(f"User {update.effective_user} has already created a checkin before. "
                         f"Cancelling current checkin...")
             return ConversationHandler.END
-        update.message.reply_html("<b>Начинаем дейлик</b>\n<i>Чтобы прекратить введите /cancel</i>")
+        update.message.reply_html("<b>Начинаем запись отчета</b>\n<i>Чтобы прекратить введите /cancel</i>")
         self.tmp_storage[update.effective_user.id] = dict()
         self.tmp_storage[update.effective_user.id]["worker"] = worker
         update.message.reply_html("Ты работал сегодня? ", reply_markup=self.yes_no_keyboard)
@@ -66,13 +66,13 @@ class Checkin(BaseConversation):
             context.bot.send_message(update.effective_chat.id, "Напиши, пожалуйста, причину")
             return self.REASON_NOT_WORKED
         else:
-            context.bot.send_message(update.effective_chat.id, "Какие задачи ты делал сегодня?")
+            context.bot.send_message(update.effective_chat.id, "Какие задачи ты выполнил сегодня?")
             return self.TASKS_DONE_TODAY
 
     def get_reason_not_worked(self, update: Update, context: CallbackContext):
         reason_not_worked = update.message.text
         self.tmp_storage[update.effective_user.id]["reason_not_worked"] = reason_not_worked
-        update.message.reply_text("Спасибо, скажи, завтра у тебя получится приступить к задачам?",
+        update.message.reply_text("Спасибо, скажи, завтра у тебя получится приступить к работе?",
                                   reply_markup=self.yes_no_keyboard)
         return self.WORK_TOMORROW
 
@@ -85,7 +85,7 @@ class Checkin(BaseConversation):
     def get_problems_faced_today(self, update: Update, context: CallbackContext):
         problems_faced_today = update.message.text
         self.tmp_storage[update.effective_user.id]["problems_today"] = problems_faced_today
-        update.message.reply_text("Спасибо, скажи, завтра у тебя получится приступить к задачам?",
+        update.message.reply_text("Спасибо, скажи, завтра у тебя получится приступить к работе?",
                                   reply_markup=self.yes_no_keyboard)
         return self.WORK_TOMORROW
 
@@ -103,7 +103,7 @@ class Checkin(BaseConversation):
                 [InlineKeyboardButton(">5", callback_data="100")],
             ])
             context.bot.send_message(update.effective_chat.id,
-                                     "Подскажи, скажи, через сколько дней планируешь приступить к ним?",
+                                     "Подскажи, скажи, через сколько дней планируешь приступить к работе?",
                                      reply_markup=days_keyboard)
             return self.WHEN_START
         else:
@@ -127,7 +127,7 @@ class Checkin(BaseConversation):
                                      "Спасибо, я учту это")
         else:
             context.bot.send_message(update.effective_chat.id,
-                                     "Спасибо, если ты не сообщил об этом своему наставнику, то свяжись с ним")
+                                     "Спасибо, если ты не сообщил об этом своему начальнику, то свяжись с ним")
         return self.end_checkin(update, context)
 
     def end_checkin(self, update: Update, context: CallbackContext):
@@ -142,7 +142,7 @@ class Checkin(BaseConversation):
     def cancel(self, update: Update, context: CallbackContext):
         logger.info(f"User {update.effective_user} cancelled the checkin")
         del self.tmp_storage[update.effective_user.id]
-        update.message.reply_text("Создание чек-ина отменено")
+        update.message.reply_text("Запись отчета отменено")
         return ConversationHandler.END
 
     def get_handler(self) -> Handler:

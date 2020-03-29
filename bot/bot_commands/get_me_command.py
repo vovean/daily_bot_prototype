@@ -12,10 +12,10 @@ class GetMeCommand(BaseInfoCommand):
 
     def get_worker_info(self, worker: Worker) -> str:
         reply = f"ФИО: {worker.full_name}\n" \
-                f"Место работы: {worker.company}\n" \
-                f"Руководитель: {worker.mentor}\n" \
-                f"Записано дейликов: {worker.dailycheckin_set.count()}\n" \
-                f"Последний дейлик: {worker.dailycheckin_set.last().created.strftime('%d.%m.%Y') if worker.dailycheckin_set.count() > 0 else ''}\n"
+                f"Должность: {worker.position}\n" \
+                f"Руководитель: {worker.boss}\n" \
+                f"Записано отчетов: {worker.dailycheckin_set.count()}\n" \
+                f"Последний отчет: {worker.dailycheckin_set.last().created.strftime('%d.%m.%Y') if worker.dailycheckin_set.count() > 0 else ''}\n"
         return reply
 
     def get_admin_info(self, admin: Admin) -> str:

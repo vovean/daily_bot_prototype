@@ -24,7 +24,7 @@ def generate_invite_code():
 
 class TelegramUser(Model):
     full_name = CharField(max_length=50)
-    company = CharField(max_length=40)
+    position = CharField(max_length=40)
     invite_code = CharField(max_length=40, default=generate_invite_code)
     telegram_id = BigIntegerField(blank=True, null=True, unique=True)
 
@@ -50,7 +50,7 @@ class Admin(Model):
 
 class Worker(TelegramUser):
     created = DateTimeField(default=timezone.now)
-    mentor = CharField(max_length=50)
+    boss = CharField(max_length=50)
     timedelta = IntegerField()
     city = CharField(max_length=40)
 
@@ -74,7 +74,7 @@ class Worker(TelegramUser):
         return int(self.telegram_id or 0) > 0
 
     def __repr__(self):
-        return f"{self.id}) {self.full_name} - сотрудник из {self.company} под менторством {self.mentor}"
+        return f"{self.id}) {self.full_name} - сотрудник на позиции {self.position} под руководством {self.boss}"
 
     def __str__(self):
         return self.__repr__()
