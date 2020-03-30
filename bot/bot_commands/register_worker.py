@@ -2,7 +2,8 @@ import logging
 import re
 
 from telegram import Update
-from telegram.ext import CallbackContext, Handler, CommandHandler, ConversationHandler, MessageHandler, Filters
+from telegram.ext import CallbackContext, Handler, CommandHandler, ConversationHandler, MessageHandler, Filters, \
+    RegexHandler
 
 from bot.bot_commands.base_conversation import BaseConversation
 from models.models import Worker
@@ -30,11 +31,6 @@ class RegisterWorker(BaseConversation):
         update.message.reply_text("Введите ваш инвайт код. Чтобы отменить введите /cancel")
         return 0
 
-    def _validate_invite_code(self, invite_code: str) -> (bool, str):
-        if not re.match(r"[0-9]{5}", invite_code):
-            return False, "Код должен быть длиной 5 и состоять только из цифр"
-        return True, ""
-
     @staticmethod
     def register_by_invite_code(invite_code: str,
                                 update: Update) -> (bool, Worker):
@@ -48,9 +44,9 @@ class RegisterWorker(BaseConversation):
 
     def process_code(self, update: Update, context: CallbackContext):
         received_code = update.message.text
-        ok, error = self._validate_invite_code(received_code)
-        if not ok:
-            update.message.reply_text(error)
+        already_registered = Worker.objects.filter(telegram_id=update.effective_user.id).exists()
+        if already_registered:
+            update.message.reply_text("Вы уже зарегистрированы в боте")
             return
         user_exists, worker = self.register_by_invite_code(received_code, update)
         if not worker:
@@ -60,18 +56,5 @@ class RegisterWorker(BaseConversation):
         logger.info(f"User {update.effective_user} has registered as {worker.full_name}")
         return ConversationHandler.END
 
-    def cancel(self, update: Update, context: CallbackContext):
-        logger.info(f"User {update.effective_user} cancelled the registration as a Worker")
-        update.message.reply_text("Регистрация отменена")
-        return ConversationHandler.END
-
     def get_handler(self) -> Handler:
-        return ConversationHandler(
-            entry_points=[CommandHandler(self.command, self.start_conv)],
-            states={
-                0: [MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.process_code)]
-            },
-            fallbacks=[
-                CommandHandler("cancel", self.cancel)
-            ]
-        )
+        return RegexHandler("[0-9]{5}", self.process_code)

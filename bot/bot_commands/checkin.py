@@ -79,7 +79,7 @@ class Checkin(BaseConversation):
     def get_tasks_done_today(self, update: Update, context: CallbackContext):
         tasks_done_today = update.message.text
         self.tmp_storage[update.effective_user.id]["tasks_done_today"] = tasks_done_today
-        update.message.reply_text("В каких задачах столкнулся с проблемами и с какими?")
+        update.message.reply_text("Какие задачи требуют участия руководителя для достижения результат?")
         return self.PROBLEMS_FACED_TODAY
 
     def get_problems_faced_today(self, update: Update, context: CallbackContext):
