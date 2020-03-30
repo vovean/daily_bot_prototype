@@ -52,7 +52,7 @@ class RegisterWorker(BaseConversation):
         if not worker:
             update.message.reply_text(f"Не найдено пользователя с таким пригласительным кодом")
             return
-        update.message.reply_text(f"Вы успешно зарегистрированы как работник {worker.full_name}")
+        update.message.reply_text(f"Вы успешно зарегистрированы как {worker.full_name}")
         logger.info(f"User {update.effective_user} has registered as {worker.full_name}")
         return ConversationHandler.END
 
