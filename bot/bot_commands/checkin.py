@@ -120,7 +120,8 @@ class Checkin(BaseConversation):
     def get_when_start(self, update: Update, context: CallbackContext):
         query: CallbackQuery = update.callback_query
         user_response = query.data
-        query.edit_message_text(query.message.text + f"\n<b>{user_response}</b>", parse_mode=ParseMode.HTML)
+        query.edit_message_text(query.message.text + f"\n<b>{user_response if int(user_response) < 6 else '>5'}</b>",
+                                parse_mode=ParseMode.HTML)
         self.tmp_storage[update.effective_user.id]["days_till_start_work"] = int(user_response)
         if user_response != ">5":
             context.bot.send_message(update.effective_chat.id,
