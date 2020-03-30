@@ -21,4 +21,4 @@ def _error(update: Update, context: CallbackContext):
     logger.error(f"Update {update} caused error {context.error}")
 
 
-ErrorHandler = MessageHandler(Filters.all, _error)
+ErrorHandler = MessageHandler(Filters.text, _error)

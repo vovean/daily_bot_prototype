@@ -93,10 +93,10 @@ class SearchWorker(BaseConversation):
                     CallbackQueryHandler(self.select_filter)
                 ],
                 self.GET_SEARCH_STRING: [
-                    MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.get_search_string)
+                    MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.get_search_string)
                 ],
                 self.DO_SEARCH: [
-                    MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.do_search)
+                    MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.do_search)
                 ]
             },
             fallbacks=[

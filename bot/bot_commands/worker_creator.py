@@ -112,11 +112,11 @@ class WorkerCreator(BaseConversation):
                 CommandHandler(self.command, self.start_conversation)
             ],
             states={
-                self.GET_NAME: [MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.get_name)],
-                self.GET_POSITION: [MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.get_position)],
-                self.GET_BOSS: [MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.get_boss)],
-                self.GET_CITY: [MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.get_city)],
-                self.GET_TIMEDELTA: [MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"),
+                self.GET_NAME: [MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.get_name)],
+                self.GET_POSITION: [MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.get_position)],
+                self.GET_BOSS: [MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.get_boss)],
+                self.GET_CITY: [MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.get_city)],
+                self.GET_TIMEDELTA: [MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"),
                                                     self.get_timedelta)],
             },
             fallbacks=[

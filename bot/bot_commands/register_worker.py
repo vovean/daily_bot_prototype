@@ -69,7 +69,7 @@ class RegisterWorker(BaseConversation):
         return ConversationHandler(
             entry_points=[CommandHandler(self.command, self.start_conv)],
             states={
-                0: [MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.process_code)]
+                0: [MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.process_code)]
             },
             fallbacks=[
                 CommandHandler("cancel", self.cancel)

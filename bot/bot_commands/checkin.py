@@ -156,25 +156,25 @@ class Checkin(BaseConversation):
                     CallbackQueryHandler(self.get_worked_today)
                 ],
                 self.REASON_NOT_WORKED: [
-                    MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.get_reason_not_worked)
+                    MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.get_reason_not_worked)
                 ],
                 self.TASKS_DONE_TODAY: [
-                    MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.get_tasks_done_today)
+                    MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.get_tasks_done_today)
                 ],
                 self.PROBLEMS_FACED_TODAY: [
-                    MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.get_problems_faced_today)
+                    MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.get_problems_faced_today)
                 ],
                 self.WORK_TOMORROW: [
                     CallbackQueryHandler(self.get_work_tomorrow)
                 ],
                 self.TASKS_TOMORROW: [
-                    MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.get_tasks_tomorrow)
+                    MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.get_tasks_tomorrow)
                 ],
                 self.WHEN_START: [
                     CallbackQueryHandler(self.get_when_start)
                 ],
                 self.END_CHECKIN: [
-                    MessageHandler(Filters.all & Filters.regex(r"^(?!\/cancel$)"), self.end_checkin)
+                    MessageHandler(Filters.text & Filters.regex(r"^(?!\/cancel$)"), self.end_checkin)
                 ]
             },
             fallbacks=[
