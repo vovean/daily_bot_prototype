@@ -57,7 +57,11 @@ class DailyReminder(BaseJob):
                               settings.CHECKIN_SINCE < worker.get_worker_time().time() < settings.CHECKIN_TILL and
                               worker.tg_verified()]
         for tg_user in workers_to_checkin:
-            context.bot.send_message(chat_id=tg_user.telegram_id, text=daily_prompt)
+            last_daily: DailyCheckin = tg_user.dailycheckin_set.last()
+            if last_daily.will_work_tomorrow is False and \
+                    timezone.now() > last_daily.created.replace(hour=0, minute=0, second=0) + \
+                    timedelta(days=last_daily.days_till_start_work + 1):
+                context.bot.send_message(chat_id=tg_user.telegram_id, text=daily_prompt)
 
     def job(self, context: CallbackContext):
         self.remind_planned_tasks(context)

@@ -18,8 +18,7 @@ class Checkin(BaseConversation):
     command = "checkin"
 
     yes_no_keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("Да", callback_data="Да")],
-        [InlineKeyboardButton("Нет", callback_data="Нет")],
+        [InlineKeyboardButton("Да", callback_data="Да"), InlineKeyboardButton("Нет", callback_data="Нет")]
     ])
 
     WORKED_TODAY, REASON_NOT_WORKED, TASKS_DONE_TODAY, PROBLEMS_FACED_TODAY, \
@@ -96,6 +95,7 @@ class Checkin(BaseConversation):
         self.tmp_storage[update.effective_user.id]["will_work_tomorrow"] = True if user_response == "Да" else False
         if user_response == "Нет":
             days_keyboard = InlineKeyboardMarkup([
+                [InlineKeyboardButton("1", callback_data="1")],
                 [InlineKeyboardButton("2", callback_data="2")],
                 [InlineKeyboardButton("3", callback_data="3")],
                 [InlineKeyboardButton("4", callback_data="4")],
@@ -143,7 +143,7 @@ class Checkin(BaseConversation):
     def cancel(self, update: Update, context: CallbackContext):
         logger.info(f"User {update.effective_user} cancelled the checkin")
         del self.tmp_storage[update.effective_user.id]
-        update.message.reply_text("Запись отчета отменено")
+        update.message.reply_text("Запись отчета отменена")
         return ConversationHandler.END
 
     def get_handler(self) -> Handler:
