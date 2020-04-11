@@ -125,7 +125,7 @@ LOGGING = {
     },
 }
 
-CHECKIN_SINCE = time(11, 0, 0)
+CHECKIN_SINCE = time(17, 0, 0)
 CHECKIN_TILL = time(23, 59, 59)
 # напоминаем юзеру о вчерашнем в 9 утра (вычесть 1)
 REMIND_PLANNED_AT = 8

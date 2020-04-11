@@ -53,12 +53,19 @@ class DailyReminder(BaseJob):
     def remind_checkin(self, context):
         daily_prompt = "Пришло время заполнить дейли отчет. Для этого введите команду /checkin"
         workers_to_checkin = [worker for worker in Worker.objects.all()
+                              # если сегодня чекина не было
                               if not worker.has_checked_in_today() and
+                              # и его локальное время в промежутке дэйлика
                               settings.CHECKIN_SINCE < worker.get_worker_time().time() < settings.CHECKIN_TILL and
+                              # и у него привязан тг
                               worker.tg_verified()]
         for tg_user in workers_to_checkin:
             last_daily: DailyCheckin = tg_user.dailycheckin_set.last()
-            if last_daily.will_work_tomorrow is False and \
+            # если он вчера (или когда был последний) планировал работать
+            if last_daily.will_work_tomorrow:
+                context.bot.send_message(chat_id=tg_user.telegram_id, text=daily_prompt)
+            # если время неработы уже истекло
+            elif last_daily.will_work_tomorrow is False and \
                     timezone.now() > last_daily.created.replace(hour=0, minute=0, second=0) + \
                     timedelta(days=last_daily.days_till_start_work + 1):
                 context.bot.send_message(chat_id=tg_user.telegram_id, text=daily_prompt)
